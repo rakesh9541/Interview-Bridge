@@ -219,12 +219,35 @@ socket.on("createMessage", (message, userName) => {
 // ===========================================================
 let cppCode = '//Interview Bridge\n#include<bits/stdc++.h>\nusing namespace std;\nint main()\n{\ncout<<"Interview Bridge";\nreturn 0;\n}'
 let javaCode = 'import java.util.*;\nimport java.lang.*;\nimport java.io.*;\n\nclass InterviewBridge\n{\npublic static void main (String[] args) throws java.lang.Exception\n{\n		// your code goes here  \n}\n}';
-let pythonCode = '#Interview Bridge\n#your code goes here..';
-// const langSelector = document.getElementById("languages");
-// const languages = [cppCode, javaCode, pythonCode];
-// langSelector.addEventListener("change", () => {
-//    console.log(langSelector.options[langSelector.selectedIndex].text);
-// });
+let pythonCode = '#Interview Bridge\n#print("Your code here")';
+ //const langSelector = document.getElementById("languages");
+ //const languages = [cppCode, javaCode, pythonCode];
+ //langSelector.addEventListener("change", () => {
+  //  console.log(langSelector.options[langSelector.selectedIndex].text);
+ //});
+ const langSelector = document.getElementById("languages");
+
+// Object to map languages to their skeleton code
+const languages = {
+  "C++": cppCode,
+  "Java": javaCode,
+  "Python": pythonCode
+};
+
+// Event listener for when the language selection changes
+langSelector.addEventListener("change", () => {
+  const selectedLanguage = langSelector.options[langSelector.selectedIndex].text;
+
+  // Set the code editor's value to the skeleton code of the selected language
+  editor.setValue(languages[selectedLanguage]);
+});
+
+
+
+
+
+
+
 const editor = CodeMirror(document.querySelector("#editor"), {
    lineNumbers: true,
    mode: "text/x-c++src",
