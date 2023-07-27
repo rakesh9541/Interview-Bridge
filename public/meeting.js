@@ -164,8 +164,15 @@ endBtn.addEventListener("click", () => {
       endBtn.classList.add("bg2");
       endBtn.classList.remove("bg-red-600");
       endBtn.innerHTML = `<i class="fa-regular text-white fa-phone"></i>`;
+
+      // Stop all media tracks
+      myVideoStream.getTracks().forEach(track => track.stop());
+
+      // Disconnect from the socket
+      socket.disconnect();
    }
 });
+
 
 const CodeMirrorCode = document.querySelector('.CodeMirror-code')
 socket.on("createMessage", (message, userName) => {
