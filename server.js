@@ -54,7 +54,12 @@ io.on("connection", (socket) => {
     socket.on("editor", (code, roomId) => {
       socket.in(roomId).emit("createEditor", code, userName);
     });
+
+    // Add this event handler to handle disconnection of users
+    socket.on('disconnect', () => {
+      socket.to(roomId).broadcast.emit('user-disconnected', userId);
+    });
   });
 });
 
-server.listen(process.env.PORT || 3000);
+server.listen(process.env.PORT || 3000);  
