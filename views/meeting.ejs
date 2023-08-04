@@ -134,6 +134,7 @@
               </svg>
               <h1 class="text-xl ml-2">Interview Bridge</h1>
             </div>
+
             <div class="flex" id="menu"><i class="fa-solid fa-bars"></i></div>
           </header>
           <div class="flex h-full overflow-auto">
@@ -155,16 +156,33 @@
                         Share Link
                       </button>
                     </div>
-                    <div class="flex items-center ml-4">
+                     <!-- Add the language selection dropdown here -->
+                     <div class="flex items-center ml-4">
                       <select id="languages" class="rounded">
                         <option value="C++">C++</option>
                         <option value="Java">Java</option>
                         <option value="Python">Python</option>
                       </select>
                     </div>
+                    
+                   
 
-
-
+                    
+                    <div class="flex justify-between px-4">
+                      <div class="flex items-center ml-4">
+                        <button
+                          id="runButton"
+                          class="bg-blue-600 text-white py-1 px-10 font-medium rounded-sm border-2 border-blue-600 hover:bg-gray-400 hover:text-black duration-500"
+                        >
+                          Run Code
+                        </button>
+                        </div>
+                    </div>
+                      
+                  
+                    
+                    
+                  
                     <div class="flex justify-evenly flex-grow p-3">
                       <button
                         id="micBtn"
@@ -276,6 +294,65 @@
       }
     </style>
     <script src="meeting.js"></script>
+    <script>
+      var socket = io('/');
+      var videoGrid = document.getElementById('video-grid')
+      var myPeer = new Peer(undefined, {
+          host: '/',
+          port: '3001'
+      })
+      var myVideo = document.createElement('video')
+      myVideo.muted = true;
+      var peers = {}
+      navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true
+      }).then(stream => {
+          addVideoStream(myVideo, stream)
+  
+          myPeer.on('call', call => {
+              call.answer(stream)
+              const video = document.createElement('video')
+              call.on('stream', userVideoStream => {
+                  addVideoStream(video, userVideoStream)
+              })
+          })
+  
+          socket.on('user-connected', userId => {
+              connectToNewUser(userId, stream)
+          })
+      })
+  
+      socket.on('user-disconnected', userId => {
+          if (peers[userId]) peers[userId].close()
+      })
+  
+      myPeer.on('open', id => {
+          socket.emit('join-room', ROOM_ID, id)
+      })
+  
+      function connectToNewUser(userId, stream) {
+          const call = myPeer.call(userId, stream)
+          const video = document.createElement('video')
+          call.on('stream', userVideoStream => {
+              addVideoStream(video, userVideoStream)
+          })
+          call.on('close', () => {
+              video.remove()
+          })
+  
+          peers[userId] = call
+      }
+  
+      function addVideoStream(video, stream) {
+          video.srcObject = stream
+          video.addEventListener('loadedmetadata', () => {
+              video.play()
+          })
+          videoGrid.append(video)
+      }
+  </script>
+  
   </body>
 </html>
 
@@ -290,7 +367,6 @@ referrerpolicy="no-referrer"
 rel="stylesheet"
 href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/codemirror.min.css"
 />
-
 <link
 rel="stylesheet"
 href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/dracula.min.css"
