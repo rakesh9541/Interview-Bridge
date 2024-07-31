@@ -1,5 +1,5 @@
 # Interview-Bridge
-Interview Bridge is a web platform that allows users to conduct technical interviews which has many features like audio, video, real-time chat, and a real-time code editor.
+Features: real-time code editor, audio, video, real-time chat.
 ## Built With
 
 
